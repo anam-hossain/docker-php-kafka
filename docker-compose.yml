@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  php_kafka:
+    image: php-kafka
+    volumes:
+      - ./:/var/www/
+    environment:
+      - "DB_HOST=mysql"
+      - "DB_DATABASE=laravel"
+      - "DB_USERNAME=root"
+      - "DB_PASSWORD=root"
+    networks:
+      - default
+      - proxynet
+
+  php_nginx:
+    image: php-nginx
+    environment:
+      NGINX_FPM_HOST: php_kafka
+    ports:
+      - 8444:80
+    depends_on:
+      - php_kafka
+    networks:
+      - default
+      - proxynet
+
+  mysql:
+    image: mysql:5
+    restart: always
+    environment:
+      MYSQL_DATABASE: phpkafka
+      MYSQL_ROOT_PASSWORD: E8UQxEFic
+      MYSQL_USER: phpkafka
+      MYSQL_PASSWORD: phpkafka
+    ports:
+      - "3406:3306"
+    volumes:
+      - "./storage/db-data:/var/lib/mysql"
+
+networks:
+  proxynet:
+    name: pub_sub_network
+    external: true
