@@ -2,6 +2,9 @@ FROM php:7.3-fpm-alpine
 
 LABEL org.label-schema.name="Anam Hossain"
 
+ENV LIBRDKAFKA_VERSION 1.2.2
+ENV PHP_RDKAFKA_VERSION 4.0.0
+
 RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     autoconf \
@@ -15,11 +18,11 @@ RUN apk add --no-cache --virtual .build-deps \
     libxml2-dev \
     postgresql-dev \
     sqlite-dev \
+    && apk add --update --no-cache nodejs npm \
     && apk add --no-cache \
     curl \
     git \
     imagemagick \
-    mysql-client \
     postgresql-libs \
     libintl \
     icu \
@@ -43,14 +46,14 @@ RUN apk add --no-cache --virtual .build-deps \
     intl \
     && curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
-RUN git clone --depth 1 --branch v1.2.2 https://github.com/edenhill/librdkafka.git \
+RUN git clone --depth 1 --branch v$LIBRDKAFKA_VERSION https://github.com/edenhill/librdkafka.git \
     && cd librdkafka \
     && ./configure \
     && make \
     && make install
 
 RUN pecl channel-update pecl.php.net \
-    && pecl install rdkafka \
+    && pecl install rdkafka-$PHP_RDKAFKA_VERSION \
     && docker-php-ext-enable rdkafka
 
 RUN rm -rf /librdkafka \
