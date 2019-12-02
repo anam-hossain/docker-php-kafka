@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.3-fpm-alpine
 
 LABEL org.label-schema.name="Anam Hossain"
 
@@ -17,7 +17,6 @@ RUN apk add --no-cache --virtual .build-deps \
     libtool \
     libxml2-dev \
     postgresql-dev \
-    oniguruma-dev \
     sqlite-dev \
     && apk add --update --no-cache nodejs npm \
     && apk add --no-cache \
@@ -29,7 +28,6 @@ RUN apk add --no-cache --virtual .build-deps \
     icu \
     icu-dev \
     libzip-dev \
-    oniguruma \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && docker-php-ext-install \
